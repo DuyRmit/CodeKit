@@ -1,0 +1,79 @@
+/* General Resets & Font */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f9;
+    color: #333;
+}
+
+/* Header */
+.app-header {
+    background-color: #ffffff;
+    padding: 10px 30px;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.app-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #2c3e50;
+}
+
+/* Main Layout Container */
+.main-container {
+    display: grid;
+    grid-template-columns: 220px 1fr; /* Sidebar width and main content */
+    height: calc(100vh - 61px); /* Full height minus header */
+}
+
+/* Sidebar Navigation */
+#sidebar {
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    padding: 20px 0;
+}
+
+#sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#sidebar .tool-link {
+    display: block;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #555;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease-in-out;
+}
+
+#sidebar .tool-link:hover {
+    background-color: #f0f0f0;
+}
+
+#sidebar .tool-link.active {
+    background-color: #e9f5ff;
+    color: #007bff;
+    font-weight: bold;
+    border-left-color: #007bff;
+}
+
+/* Main Content Area */
+#app-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Control panel and preview panel */
+    gap: 20px;
+    padding: 20px;
+    overflow-y: auto; /* Allow scrolling if content is long */
+}
+
+/* Panels */
+#control-panel, #preview-panel {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    overflow-y: auto;
+}
