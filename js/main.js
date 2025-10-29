@@ -1,38 +1,112 @@
 document.addEventListener('DOMContentLoaded', () => {
-
+ 
     const sidebarLinks = document.querySelectorAll('#sidebar .tool-link');
     const controlPanel = document.getElementById('control-panel');
     const previewPanel = document.getElementById('preview-panel');
-
-    // --- ĐỊNH NGHĨA CÁC CÔNG CỤ CỦA BẠN Ở ĐÂY ---
-    // Hiện tại chỉ là placeholder, chúng ta sẽ tích hợp code thật sau
+ 
+    // --- TOOL DEFINITIONS ---
     const tools = {
         layoutGen: {
-            getControlPanelHTML: () => `<h2>Layout Generator</h2><p>Phần điều khiển của Layout Generator sẽ ở đây.</p>`,
-            getPreviewPanelHTML: () => `<h3>Live Preview</h3><p>Kết quả xem trước sẽ ở đây.</p>`,
+            getControlPanelHTML: () => `<h2>Layout Generator</h2><p>Controls for the Layout Generator will go here.</p>`,
+            getPreviewPanelHTML: () => `<h3>Live Preview</h3><p>The resulting layout preview will be here.</p>`,
             init: () => {
                 console.log('Layout Generator initialized!');
-                // Code logic của Layout Generator sẽ được gọi ở đây
             }
         },
         colorReplacer: {
-            getControlPanelHTML: () => `<h2>Color Replacer</h2><p>Phần điều khiển của Color Replacer sẽ ở đây.</p>`,
-            getPreviewPanelHTML: () => `<h3>Updated Code</h3><p>Code sau khi thay thế màu sẽ ở đây.</p>`,
+            getControlPanelHTML: () => `<h2>Color Replacer</h2><p>Controls for the Color Replacer will go here.</p>`,
+            getPreviewPanelHTML: () => `<h3>Updated Code</h3><p>Code after color replacement will be here.</p>`,
             init: () => console.log('Color Replacer initialized!')
         },
         detailsGen: {
-            getControlPanelHTML: () => `<h2>Details Toggle Generator</h2><p>Phần điều khiển của Details Toggle sẽ ở đây.</p>`,
-            getPreviewPanelHTML: () => `<h3>Live Preview & Code</h3><p>Xem trước và code sẽ ở đây.</p>`,
+            getControlPanelHTML: () => `<h2>Details Toggle Generator</h2><p>Controls for the Details Toggle will go here.</p>`,
+            getPreviewPanelHTML: () => `<h3>Live Preview & Code</h3><p>The preview and code will be here.</p>`,
             init: () => console.log('Details Toggle Gen initialized!')
         },
+        // --- REPLACED IFRAME GENERATOR ---
         iframeGen: {
-            getControlPanelHTML: () => `<h2>Iframe Generator</h2><p>Phần điều khiển của Iframe Generator sẽ ở đây.</p>`,
-            getPreviewPanelHTML: () => `<h3>Generated Iframe Code</h3><p>Code Iframe sẽ ở đây.</p>`,
-            init: () => console.log('Iframe Gen initialized!')
+            getControlPanelHTML: () => `
+                <h2>Iframe Generator</h2>
+                <div class="form-group">
+                    <label for="iframe-url">URL</label>
+                    <input type="text" id="iframe-url" placeholder="https://example.com" value="https://www.youtube.com/embed/dQw4w9WgXcQ">
+                </div>
+                <div class="form-group">
+                    <label>Dimensions (px)</label>
+                    <div class="dimension-inputs">
+                        <div>
+                            <input type="number" id="iframe-width" value="560" placeholder="Width">
+                        </div>
+                        <div>
+                            <input type="number" id="iframe-height" value="315" placeholder="Height">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="iframe-title">Title (for accessibility)</label>
+                    <input type="text" id="iframe-title" placeholder="A descriptive title" value="Example Video">
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" id="iframe-fullscreen" checked> Allow Fullscreen</label>
+                </div>
+                <button id="generate-iframe-btn" class="btn btn-primary">Generate Code</button>
+            `,
+            getPreviewPanelHTML: () => `
+                <h3>Generated Iframe Code</h3>
+                <div class="code-output-container">
+                    <button id="copy-iframe-code-btn" class="copy-btn">Copy</button>
+                    <pre><code id="iframe-output-code"></code></pre>
+                </div>
+                <h3>Live Preview</h3>
+                <div id="iframe-live-preview"></div>
+            `,
+            init: () => {
+                console.log('Iframe Gen initialized!');
+                const urlInput = document.getElementById('iframe-url');
+                const widthInput = document.getElementById('iframe-width');
+                const heightInput = document.getElementById('iframe-height');
+                const titleInput = document.getElementById('iframe-title');
+                const fullscreenCheckbox = document.getElementById('iframe-fullscreen');
+                const generateBtn = document.getElementById('generate-iframe-btn');
+                const copyBtn = document.getElementById('copy-iframe-code-btn');
+                const outputCode = document.getElementById('iframe-output-code');
+                const livePreview = document.getElementById('iframe-live-preview');
+
+                const generateIframeCode = () => {
+                    const url = urlInput.value.trim() || 'about:blank';
+                    const width = widthInput.value || '560';
+                    const height = heightInput.value || '315';
+                    const title = titleInput.value.trim() || 'Embedded Content';
+                    const allowFullscreen = fullscreenCheckbox.checked ? 'allowfullscreen' : '';
+
+                    const iframeTag = `<iframe\n  src="${url}"\n  width="${width}"\n  height="${height}"\n  title="${title}"\n  frameborder="0"\n  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"\n  ${allowFullscreen}\n></iframe>`;
+
+                    outputCode.textContent = iframeTag;
+                    livePreview.innerHTML = iframeTag; // Update live preview as well
+                };
+
+                const copyToClipboard = () => {
+                    navigator.clipboard.writeText(outputCode.textContent).then(() => {
+                        copyBtn.textContent = 'Copied!';
+                        setTimeout(() => {
+                            copyBtn.textContent = 'Copy';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy text: ', err);
+                        alert('Failed to copy code.');
+                    });
+                };
+                
+                generateBtn.addEventListener('click', generateIframeCode);
+                copyBtn.addEventListener('click', copyToClipboard);
+
+                // Generate initial code on load
+                generateIframeCode();
+            }
         }
     };
-
-    // --- HÀM TẢI CÔNG CỤ ---
+ 
+    // --- TOOL LOADING FUNCTION ---
     function loadTool(toolName) {
         const tool = tools[toolName];
         if (!tool) {
@@ -40,32 +114,30 @@ document.addEventListener('DOMContentLoaded', () => {
             previewPanel.innerHTML = '';
             return;
         }
-
-        // Cập nhật nội dung cho các panel
+ 
+        // Update panel content
         controlPanel.innerHTML = tool.getControlPanelHTML();
         previewPanel.innerHTML = tool.getPreviewPanelHTML();
-
-        // Chạy hàm khởi tạo của công cụ
+ 
+        // Run the tool's initialization script
         tool.init();
     }
-
-    // --- XỬ LÝ SỰ KIỆN CLICK TRÊN SIDEBAR ---
+ 
+    // --- SIDEBAR CLICK EVENT HANDLING ---
     sidebarLinks.forEach(link => {
         link.addEventListener('click', (event) => {
-            event.preventDefault(); // Ngăn trình duyệt chuyển trang
-
-            // Xóa class 'active' khỏi tất cả các link
+            event.preventDefault(); 
+ 
             sidebarLinks.forEach(l => l.classList.remove('active'));
-
-            // Thêm class 'active' cho link vừa được click
             link.classList.add('active');
-
-            // Tải công cụ tương ứng
+ 
             const toolName = link.dataset.tool;
             loadTool(toolName);
         });
     });
-
-    // --- TẢI CÔNG CỤ MẶC ĐỊNH KHI VÀO TRANG ---
+ 
+    // --- LOAD DEFAULT TOOL ON PAGE LOAD ---
+    // Activate the corresponding link for the default tool
+    document.querySelector('.tool-link[data-tool="layoutGen"]').classList.add('active');
     loadTool('layoutGen');
 });
