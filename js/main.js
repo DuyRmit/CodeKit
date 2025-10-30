@@ -615,11 +615,270 @@ document.addEventListener('DOMContentLoaded', () => {
             getPreviewPanelHTML: () => `<h3>Updated Code</h3><p>Code after color replacement will be here.</p>`,
             init: () => console.log('Color Replacer initialized!')
         },
-        detailsGen: {
-            getControlPanelHTML: () => `<h2>Details Toggle Generator</h2><p>Controls for the Details Toggle will go here.</p>`,
-            getPreviewPanelHTML: () => `<h3>Live Preview & Code</h3><p>The preview and code will be here.</p>`,
-            init: () => console.log('Details Toggle Gen initialized!')
-        },
+     // --- detail toggle ---
+        // Paste this code over the existing 'detailsGen' object in main.js
+    detailsGen: {
+        getControlPanelHTML: () => `
+            <h2>Details Toggle Generator</h2>
+            <div class="form-group">
+                <label for="details-summary">Summary Text</label>
+                <input type="text" id="details-summary" value="Infographic Description">
+                <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">Must end with "Infographic Description"</p>
+            </div>
+            <div class="form-group">
+                <label for="details-description">Description Text</label>
+                <textarea id="details-description" rows="5" placeholder="Enter your description here...">This is the detailed description that will be shown when the toggle is opened.</textarea>
+            </div>
+        `,
+        getPreviewPanelHTML: () => `
+            <h3>Live Preview</h3>
+            <div id="details-live-preview" class="live-preview-container"></div>
+            
+            <h3>Generated HTML Code</h3>
+            <div class="code-output-container">
+                <button id="copy-details-code-btn" class="copy-btn">Copy</button>
+                <pre><code id="details-output-code"></code></pre>
+            </div>
+        `,
+        init: () => {
+            console.log('Details Toggle Gen initialized!');
+
+            // Get elements
+            const summaryInput = document.getElementById('details-summary');
+            const descriptionInput = document.getElementById('details-description');
+            const livePreview = document.getElementById('details-live-preview');
+            const outputCode = document.getElementById('details-output-code');
+            const copyBtn = document.getElementById('copy-details-code-btn');
+            
+            // Function to generate and update code/preview
+            const generateDetailsCode = () => {
+                const summary = summaryInput.value;
+                const description = descriptionInput.value;
+
+                // Basic validation feedback
+                if (!summary.endsWith("Infographic Description")) {
+                    summaryInput.style.border = '1px solid #e74c3c';
+                } else {
+                    summaryInput.style.border = '1px solid #ccc';
+                }
+
+                const htmlCode = `<details style="margin-top: 20px;">
+    <summary style="color: #666666; cursor: pointer;">${summary}</summary>
+    <div class="content-box pad-box-mini" style="background-color: #f5f5f5; color: #333333; padding: 0px 15px; margin: 5px 15px; height: 100%;" title="embedded content">
+        <p style="margin: 0; padding: 1em 0;">${description}</p>
+    </div>
+</details>`;
+
+                // Update the code output and live preview
+                outputCode.textContent = htmlCode;
+                livePreview.innerHTML = htmlCode;
+            };
+
+            // Function to handle copying
+            const copyToClipboard = () => {
+                if (!outputCode.textContent) return;
+                navigator.clipboard.writeText(outputCode.textContent).then(() => {
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyBtn.textContent = 'Copy';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    alert('Failed to copy code.');
+                });
+            };
+
+            // Add event listeners
+            summaryInput.addEventListener('input', generateDetailsCode);
+            descriptionInput.addEventListener('input', generateDetailsCode);
+            copyBtn.addEventListener('click', copyToClipboard);
+
+            // Generate initial code on load
+            generateDetailsCode();
+        }
+    },
+     // coldate //
+     // Paste this code over the existing 'colorReplacer' object in main.js
+    colorReplacer: {
+        getControlPanelHTML: () => `
+            <h2>Coldate: Color Replacer</h2>
+            <div class="form-group">
+                <label for="cr-input-code">Input Code</label>
+                <textarea id="cr-input-code" rows="8" placeholder="Paste your HTML/CSS code here..."></textarea>
+            </div>
+
+            <h3 style="margin-bottom: 10px;">Color Replacements</h3>
+            <div id="cr-pairs-container" style="margin-bottom: 10px;">
+                <!-- Color pairs will be added here -->
+            </div>
+            <button id="cr-add-btn" class="btn" style="margin-right: 10px;">Add Pair</button>
+            <button id="cr-process-btn" class="btn btn-primary">Update Colors</button>
+
+            <h3 style="margin-top: 25px;">Detected Colors</h3>
+            <div id="cr-color-list" class="cr-color-scan-list">
+                <p>Scan to detect colors in your input.</p>
+            </div>
+            <div class="cr-stats-bar">
+                <span id="cr-color-count">0 colors detected</span>
+                <button id="cr-scan-btn" class="btn">Scan Colors</button>
+            </div>
+        `,
+        getPreviewPanelHTML: () => `
+            <h3>Output Code</h3>
+            <div class="code-output-container">
+                <button id="cr-copy-btn" class="copy-btn">Copy</button>
+                <textarea id="cr-output-code" readonly rows="20" placeholder="Your updated code will appear here..."></textarea>
+            </div>
+            <div class="cr-stats-bar">
+                <span id="cr-replace-count">0 replacements made</span>
+                <span id="cr-time-info">Ready</span>
+            </div>
+        `,
+        init: () => {
+            console.log('Coldate Color Replacer initialized!');
+            
+            // DOM elements
+            const inputCode = document.getElementById('cr-input-code');
+            const outputCode = document.getElementById('cr-output-code');
+            const colorPairsContainer = document.getElementById('cr-pairs-container');
+            const colorList = document.getElementById('cr-color-list');
+            const addColorBtn = document.getElementById('cr-add-btn');
+            const processBtn = document.getElementById('cr-process-btn');
+            const scanBtn = document.getElementById('cr-scan-btn');
+            const copyBtn = document.getElementById('cr-copy-btn');
+            const colorCount = document.getElementById('cr-color-count');
+            const replaceCount = document.getElementById('cr-replace-count');
+            const timeInfo = document.getElementById('cr-time-info');
+
+            // --- Helper Functions ---
+            
+            const addColorPair = (oldColor = '', newColor = '') => {
+                const pairElement = document.createElement('div');
+                pairElement.className = 'cr-color-pair';
+                pairElement.innerHTML = `
+                    <input type="text" class="cr-color-input old-color" value="${oldColor}" placeholder="#RRGGBB">
+                    <span class="cr-arrow">→</span>
+                    <input type="text" class="cr-color-input new-color" value="${newColor}" placeholder="New color">
+                    <button class="cr-remove-btn">×</button>
+                `;
+                colorPairsContainer.appendChild(pairElement);
+                
+                pairElement.querySelector('.cr-remove-btn').addEventListener('click', () => {
+                    colorPairsContainer.removeChild(pairElement);
+                });
+            };
+
+            const getReplacements = () => {
+                const pairs = [];
+                const pairElements = colorPairsContainer.querySelectorAll('.cr-color-pair');
+                pairElements.forEach(pair => {
+                    const oldColor = pair.querySelector('.old-color').value.trim();
+                    const newColor = pair.querySelector('.new-color').value.trim();
+                    if (oldColor && newColor) {
+                        pairs.push({ oldColor, newColor });
+                    }
+                });
+                return pairs;
+            };
+
+            const escapeRegExp = (string) => {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            };
+
+            const detectColors = (code) => {
+                const colorRegex = /(#([0-9a-f]{3}){1,2}\b|rgb\((\s*\d+\s*,){2}\s*\d+\s*\)|rgba\((\s*\d+\s*,){3}\s*[\d.]+\s*\))/gi;
+                const matches = code.match(colorRegex) || [];
+                const colorCounts = {};
+                matches.forEach(color => {
+                    const normalizedColor = color.toLowerCase();
+                    colorCounts[normalizedColor] = (colorCounts[normalizedColor] || 0) + 1;
+                });
+                return Object.entries(colorCounts)
+                    .map(([color, count]) => ({ color, count }))
+                    .sort((a, b) => b.count - a.count);
+            };
+
+            const displayDetectedColors = (colors) => {
+                colorList.innerHTML = '';
+                colorCount.textContent = `${colors.length} unique colors detected`;
+
+                if (colors.length === 0) {
+                    colorList.innerHTML = '<p>No color codes found in the input.</p>';
+                    return;
+                }
+
+                colors.forEach(({ color, count }) => {
+                    const item = document.createElement('div');
+                    item.className = 'cr-color-item';
+                    item.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div class="cr-color-preview" style="background-color: ${color}"></div>
+                            <code>${color}</code>
+                        </div>
+                        <span>${count}x</span>
+                    `;
+                    item.addEventListener('click', () => {
+                        addColorPair(color, '');
+                        colorPairsContainer.lastElementChild.querySelector('.new-color').focus();
+                    });
+                    colorList.appendChild(item);
+                });
+            };
+
+            // --- Event Listeners ---
+            
+            addColorBtn.addEventListener('click', () => addColorPair());
+
+            scanBtn.addEventListener('click', () => {
+                const code = inputCode.value;
+                if (!code.trim()) {
+                    alert('Please enter some code to scan.');
+                    return;
+                }
+                const colors = detectColors(code);
+                displayDetectedColors(colors);
+            });
+
+            processBtn.addEventListener('click', () => {
+                const code = inputCode.value;
+                const replacements = getReplacements();
+                if (!code.trim() || replacements.length === 0) {
+                    alert('Please provide code and at least one valid color pair.');
+                    return;
+                }
+
+                const startTime = performance.now();
+                let updatedCode = code;
+                let totalReplacements = 0;
+
+                replacements.forEach(pair => {
+                    const regex = new RegExp(escapeRegExp(pair.oldColor), 'gi');
+                    const matches = updatedCode.match(regex);
+                    if (matches) {
+                        totalReplacements += matches.length;
+                    }
+                    updatedCode = updatedCode.replace(regex, pair.newColor);
+                });
+
+                outputCode.value = updatedCode;
+                const duration = ((performance.now() - startTime) / 1000).toFixed(2);
+
+                replaceCount.textContent = `${totalReplacements} replacements made`;
+                timeInfo.textContent = `Processed in ${duration}s`;
+            });
+
+            copyBtn.addEventListener('click', () => {
+                if (!outputCode.value) return;
+                navigator.clipboard.writeText(outputCode.value).then(() => {
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
+                });
+            });
+
+            // Initialize with one empty color pair
+            addColorPair();
+        }
+    },
         // --- REPLACED IFRAME GENERATOR ---
         iframeGen: {
             getControlPanelHTML: () => `
