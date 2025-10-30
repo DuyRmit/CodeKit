@@ -23,10 +23,86 @@ document.addEventListener('DOMContentLoaded', () => {
             getPreviewPanelHTML: () => `<h3>Live Preview & Code</h3><p>The preview and code will be here.</p>`,
             init: () => console.log('Details Toggle Gen initialized!')
         },
-        // --- REPLACED IFRAME GENERATOR ---
-        iframeGen: {
+        // --- IfraGen Tool ---
+        ifragen: {
             getControlPanelHTML: () => `
-                <h2>Iframe Generator</h2>
+                <div id="ifragen-tool-container">
+                    <h2>IfraGen</h2>
+                    <div class="ifragen-form-group">
+                        <label for="ifragen-fileLink">1. Paste the File Link</label>
+                        <input type="text" id="ifragen-fileLink" placeholder="e.g., https://rmit.instructure.com/courses/.../...?preview=...">
+                    </div>
+                    <div class="ifragen-form-group">
+                        <label for="ifragen-height">2. Set the Height</label>
+                        <input type="number" id="ifragen-height" value="2000">
+                    </div>
+                    <button class="ifragen-button" id="ifragen-generate-btn">3. Generate Code</button>
+                    <p id="ifragen-error-message">Error: Could not find Course ID or File ID in the link. Please check the URL.</p>
+                </div>
+            `,
+            getPreviewPanelHTML: () => `
+                <div class="ifragen-output-container">
+                    <label for="ifragen-result">4. Copy Your Code</label>
+                    <textarea id="ifragen-result" readonly placeholder="Your generated code will appear here..."></textarea>
+                    <button class="ifragen-copy-button" id="ifragen-copy-btn">Copy to Clipboard</button>
+                </div>
+            `,
+            init: () => {
+                console.log('IfraGen tool initialized!');
+                const fileLinkInput = document.getElementById('ifragen-fileLink');
+                const heightInput = document.getElementById('ifragen-height');
+                const generateBtn = document.getElementById('ifragen-generate-btn');
+                const outputArea = document.getElementById('ifragen-result');
+                const copyBtn = document.getElementById('ifragen-copy-btn');
+                const errorMessage = document.getElementById('ifragen-error-message');
+
+                function generateIframe() {
+                    const fileLink = fileLinkInput.value;
+                    const height = heightInput.value;
+        
+                    errorMessage.style.display = 'none';
+                    outputArea.value = '';
+        
+                    const courseMatch = fileLink.match(/\/courses\/(\d+)\//);
+                    const fileMatch = fileLink.match(/preview=(\d+)/);
+        
+                    if (courseMatch && fileMatch) {
+                        const courseId = courseMatch[1];
+                        const fileId = fileMatch[1];
+                        
+                        const iframeCode = 
+`<p><iframe src="https://rmit.instructure.com/courses/${courseId}/files/${fileId}/download" width="1200" height="${height}" loading="lazy" allowfullscreen="allowfullscreen" data-api-endpoint="https://rmit.instructure.com/api/v1/courses/${courseId}/files/${fileId}" data-api-returntype="File"></iframe></p>`;
+        
+                        outputArea.value = iframeCode;
+                    } else {
+                        errorMessage.style.display = 'block';
+                    }
+                }
+
+                function copyCode() {
+                    if (!outputArea.value) return;
+        
+                    outputArea.select();
+                    document.execCommand('copy');
+                    
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                    }, 2000);
+                }
+
+                generateBtn.addEventListener('click', generateIframe);
+                copyBtn.addEventListener('click', copyCode);
+            }
+        },
+        // --- ORIGINAL IFRAME GENERATOR (RENAME IF YOU WANT TO KEEP BOTH) ---
+        // If you want to keep the generic iframe generator, give it a different name,
+        // for example, `genericIframeGen` and update the sidebar link accordingly.
+        // Otherwise, the `ifragen` above replaces this one.
+        iframeGen: { // Renamed from 'iframeGen' for this example
+            getControlPanelHTML: () => `
+                <h2>Generic Iframe Generator</h2>
                 <div class="form-group">
                     <label for="iframe-url">URL</label>
                     <input type="text" id="iframe-url" placeholder="https://example.com" value="https://www.youtube.com/embed/dQw4w9WgXcQ">
@@ -61,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div id="iframe-live-preview"></div>
             `,
             init: () => {
-                console.log('Iframe Gen initialized!');
+                console.log('Original Iframe Gen initialized!');
                 const urlInput = document.getElementById('iframe-url');
                 const widthInput = document.getElementById('iframe-width');
                 const heightInput = document.getElementById('iframe-height');
