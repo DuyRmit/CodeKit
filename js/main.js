@@ -14,10 +14,217 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         colorReplacer: {
-            getControlPanelHTML: () => `<h2>Color Replacer</h2><p>Controls for the Color Replacer will go here.</p>`,
-            getPreviewPanelHTML: () => `<h3>Updated Code</h3><p>Code after color replacement will be here.</p>`,
-            init: () => console.log('Color Replacer initialized!')
-        },
+    getControlPanelHTML: () => `
+        <div class="color-replacer-container">
+            <h2>Coldate - Color Replacer</h2>
+            <p>Paste your HTML/CSS code below and replace color codes easily</p>
+            
+            <div class="input-section">
+                <h3>Input Code</h3>
+                <textarea id="inputCode" placeholder="Paste your HTML/CSS code here..."></textarea>
+                
+                <h3>Color Replacements</h3>
+                <div id="colorPairsContainer">
+                    <!-- Color pairs will be added here -->
+                </div>
+                
+                <button id="addColorBtn" class="add-btn">Add Color Replacement</button>
+                <button id="processBtn">Update Colors</button>
+            </div>
+        </div>`,
+    getPreviewPanelHTML: () => `
+        <div class="preview-container">
+            <div class="colors-section">
+                <h3>Detected Colors</h3>
+                <div id="colorList" class="color-list">
+                    <!-- Detected colors will appear here -->
+                </div>
+                <div class="stats">
+                    <span id="colorCount">0 colors detected</span>
+                    <button id="scanColorsBtn">Scan Colors</button>
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <h3>Output Code</h3>
+                <textarea id="outputCode" readonly placeholder="Your updated code will appear here..."></textarea>
+                <button id="copyBtn" class="copy-btn">Copy to Clipboard</button>
+                <div class="stats">
+                    <span id="replaceCount">0 replacements made</span>
+                    <span id="timeInfo">Ready</span>
+                </div>
+            </div>
+        </div>`,
+    init: () => {
+        console.log('Coldate initialized!');
+        const inputCode = document.getElementById('inputCode');
+        const outputCode = document.getElementById('outputCode');
+        const colorPairsContainer = document.getElementById('colorPairsContainer');
+        const colorList = document.getElementById('colorList');
+        const addColorBtn = document.getElementById('addColorBtn');
+        const processBtn = document.getElementById('processBtn');
+        const scanColorsBtn = document.getElementById('scanColorsBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const colorCount = document.getElementById('colorCount');
+        const replaceCount = document.getElementById('replaceCount');
+        const timeInfo = document.getElementById('timeInfo');
+
+        // Add new color replacement pair
+        function addColorPair(oldColor = '', newColor = '') {
+            const pairId = Date.now();
+            const pairElement = document.createElement('div');
+            pairElement.className = 'color-pair';
+            pairElement.innerHTML = `
+                <input type="text" class="color-input old-color" value="${oldColor}" placeholder="#RRGGBB or rgb()" data-preview="old-${pairId}">
+                <div class="color-preview" id="old-${pairId}" style="background-color: ${oldColor || 'transparent'}"></div>
+                <span>→</span>
+                <input type="text" class="color-input new-color" value="${newColor}" placeholder="New color" data-preview="new-${pairId}">
+                <div class="color-preview" id="new-${pairId}" style="background-color: ${newColor || 'transparent'}"></div>
+                <button class="remove-btn" data-pair="${pairId}">×</button>
+            `;
+            
+            colorPairsContainer.appendChild(pairElement);
+            
+            // Add event listeners
+            pairElement.querySelector('.old-color').addEventListener('input', updateColorPreview);
+            pairElement.querySelector('.new-color').addEventListener('input', updateColorPreview);
+            pairElement.querySelector('.remove-btn').addEventListener('click', () => {
+                colorPairsContainer.removeChild(pairElement);
+            });
+        }
+
+        function updateColorPreview(e) {
+            const previewId = e.target.dataset.preview;
+            const previewElement = document.getElementById(previewId);
+            if (previewElement) {
+                previewElement.style.backgroundColor = e.target.value || 'transparent';
+            }
+        }
+
+        function getReplacements() {
+            const pairs = [];
+            const pairElements = colorPairsContainer.querySelectorAll('.color-pair');
+            
+            pairElements.forEach(pair => {
+                const oldColor = pair.querySelector('.old-color').value.trim();
+                const newColor = pair.querySelector('.new-color').value.trim();
+                
+                if (oldColor && newColor) {
+                    pairs.push({ oldColor, newColor });
+                }
+            });
+            
+            return pairs;
+        }
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function detectColors(code) {
+            const colorRegex = /(#[0-9a-f]{3,6}\b|rgb\((\s*\d+\s*,){2}\s*\d+\s*\)|rgba\((\s*\d+\s*,){3}\s*[\d.]+\s*\)|hsl\(\s*\d+\s*,\s*[\d.]+%\s*,\s*[\d.]+%\s*\)|hsla\(\s*\d+\s*,\s*[\d.]+%\s*,\s*[\d.]+%\s*,\s*[\d.]+\s*\))/gi;
+            const matches = code.match(colorRegex) || [];
+            
+            const colorCounts = {};
+            matches.forEach(color => {
+                const normalizedColor = color.toLowerCase();
+                colorCounts[normalizedColor] = (colorCounts[normalizedColor] || 0) + 1;
+            });
+            
+            return Object.entries(colorCounts)
+                .map(([color, count]) => ({ color, count }))
+                .sort((a, b) => b.count - a.count);
+        }
+
+        function displayDetectedColors(colors) {
+            colorList.innerHTML = '';
+            colorCount.textContent = `${colors.length} colors detected`;
+            
+            if (colors.length === 0) {
+                colorList.innerHTML = '<p>No color codes found in the input.</p>';
+                return;
+            }
+            
+            colors.forEach(colorObj => {
+                const colorItem = document.createElement('div');
+                colorItem.className = 'color-item';
+                colorItem.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="color-preview" style="background-color: ${colorObj.color}"></div>
+                        <span>${colorObj.color}</span>
+                    </div>
+                    <span>${colorObj.count}x</span>
+                `;
+                
+                colorItem.addEventListener('click', function() {
+                    addColorPair(colorObj.color, '');
+                    colorPairsContainer.lastElementChild.scrollIntoView({ behavior: 'smooth' });
+                    colorPairsContainer.lastElementChild.querySelector('.new-color').focus();
+                });
+                
+                colorList.appendChild(colorItem);
+            });
+        }
+
+        // Event Listeners
+        addColorBtn.addEventListener('click', () => addColorPair('', ''));
+        
+        processBtn.addEventListener('click', function() {
+            const code = inputCode.value;
+            if (!code.trim()) {
+                alert('Please enter some code first');
+                return;
+            }
+            
+            const startTime = performance.now();
+            const replacements = getReplacements();
+            let updatedCode = code;
+            let replacementCount = 0;
+            
+            replacements.forEach(pair => {
+                const regex = new RegExp(escapeRegExp(pair.oldColor), 'gi');
+                updatedCode = updatedCode.replace(regex, pair.newColor);
+                const matches = (code.match(regex) || []).length;
+                replacementCount += matches;
+            });
+            
+            outputCode.value = updatedCode;
+            const endTime = performance.now();
+            const duration = ((endTime - startTime) / 1000).toFixed(2);
+            
+            replaceCount.textContent = `${replacementCount} replacements made`;
+            timeInfo.textContent = `Processed in ${duration}s`;
+        });
+        
+        scanColorsBtn.addEventListener('click', function() {
+            const code = inputCode.value;
+            if (!code.trim()) {
+                alert('Please enter some code first');
+                return;
+            }
+            
+            const colors = detectColors(code);
+            displayDetectedColors(colors);
+        });
+        
+        copyBtn.addEventListener('click', function() {
+            outputCode.select();
+            document.execCommand('copy');
+            
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = 'Copied!';
+            copyBtn.style.backgroundColor = '#4CAF50';
+            
+            setTimeout(() => {
+                copyBtn.textContent = originalText;
+                copyBtn.style.backgroundColor = '#4cc9f0';
+            }, 2000);
+        });
+
+        // Initialize with one empty color pair
+        addColorPair();
+    }
+},
         // --- Details Toggle Generator Tool (React + Tailwind) ---
         detailsGen: {
             getControlPanelHTML: () => `
