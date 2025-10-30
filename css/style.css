@@ -166,3 +166,587 @@ body {
 #preview-panel .copy-btn:hover {
     background-color: #777;
 }
+/* =================================================== */
+/* === APPENDED STYLES FOR Coldate, LayGen, DetailsGen Tools === */
+/* =================================================== */
+
+/* --- General Tool Styles (can be shared) --- */
+.tool-title {
+    font-size: 1.5rem; /* H1/H2 equivalent */
+    color: var(--primary);
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.tool-subtitle {
+    font-size: 1rem; /* P equivalent */
+    color: var(--dark);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.tool-section-heading {
+    font-size: 1.25rem; /* H3 equivalent */
+    color: var(--primary);
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+/* Base Button Styles (if not already defined) */
+.tool-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px; /* Standardized radius */
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.tool-btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Primary Button Style (e.g., Process, Generate, Get Code) */
+.tool-btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.tool-btn-primary:hover {
+    background-color: var(--secondary);
+}
+
+/* Secondary Button Style (e.g., Add, Scan, Switch Code Type) */
+.tool-btn-secondary {
+    background-color: var(--accent);
+    color: white;
+}
+
+.tool-btn-secondary:hover {
+    background-color: var(--secondary);
+}
+
+/* Tertiary Button Style (e.g., Remove, Close Modal) */
+.tool-btn-tertiary {
+    background-color: var(--warning);
+    color: white;
+    font-size: 0.8rem;
+    padding: 5px 10px;
+}
+
+.tool-btn-tertiary:hover {
+    background-color: #d61f6d; /* Darker warning */
+}
+
+/* Copy Button */
+.tool-copy-btn {
+    background-color: var(--success); /* Greenish/blueish for success */
+    color: white;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.tool-copy-btn:hover {
+    background-color: #3aa8d8; /* Darker success */
+}
+
+/* Input Fields */
+.tool-input,
+.tool-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    margin-bottom: 10px; /* Consistent spacing */
+    background-color: white; /* Ensure white background */
+    color: var(--dark);
+}
+
+.tool-input:focus,
+.tool-textarea:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+}
+
+.tool-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+/* Bento Card Style */
+.bento-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bento-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Specific Styles for Coldate --- */
+.coldate-color-pair {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.coldate-color-preview {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #e9ecef;
+    flex-shrink: 0;
+}
+
+.coldate-color-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    padding: 10px;
+    background-color: #f1f3f5;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0; /* Added subtle border */
+}
+
+.coldate-color-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    margin-bottom: 5px;
+    background-color: white;
+    border-radius: 6px;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.coldate-color-item:hover {
+    background-color: #e9f5ff; /* Light blue on hover */
+}
+
+.coldate-color-item span {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+}
+
+.coldate-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* --- Specific Styles for LayGen --- */
+:root {
+    --laygen-primary-color: #3b82f6; /* Adjusted to your default */
+    --laygen-border-color: #d1d5db;
+    --laygen-bg-light: #f9fafb;
+    --laygen-text-dark: #1f2937;
+    --laygen-text-light: #6b7280;
+}
+
+.laygen-panel-title {
+    font-size: 1.1rem;
+    margin: 0 0 1rem 0;
+    border-bottom: 1px solid var(--laygen-border-color);
+    padding-bottom: .5rem;
+    color: var(--laygen-text-dark);
+    font-weight: 600;
+}
+
+.laygen-selector-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.laygen-btn-selector {
+    padding: .5rem .8rem;
+    border: 1px solid var(--laygen-border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #fff;
+    transition: all .2s;
+    color: var(--laygen-text-dark);
+}
+
+.laygen-btn-selector.selected {
+    background-color: var(--laygen-primary-color);
+    color: #fff;
+    border-color: var(--laygen-primary-color);
+}
+
+.laygen-layout-tiles,
+.laygen-style-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: .75rem;
+}
+
+.laygen-layout-tile,
+.laygen-style-tile {
+    border: 2px solid var(--laygen-border-color);
+    border-radius: 6px;
+    padding: .5rem;
+    cursor: pointer;
+    text-align: center;
+    background-color: #fff;
+    transition: all .2s;
+    font-size: .8rem;
+    color: var(--laygen-text-dark);
+}
+
+.laygen-layout-tile.selected,
+.laygen-style-tile.selected {
+    border-color: var(--laygen-primary-color);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, .4);
+}
+
+.laygen-style-tile.disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    background-color: #f0f0f0;
+}
+
+.laygen-layout-tile .laygen-preview-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 5px;
+    pointer-events: none;
+}
+
+.laygen-layout-tile .laygen-preview-row {
+    display: flex;
+    gap: 4px;
+}
+
+.laygen-layout-tile .laygen-preview-box {
+    background-color: var(--laygen-border-color);
+    height: 12px;
+    border-radius: 2px;
+    flex-grow: 1;
+}
+
+.laygen-style-tile-preview {
+    height: 40px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    pointer-events: none;
+    border: 1px solid rgba(0,0,0,0.1); /* Added for better visibility of transparent previews */
+}
+
+.laygen-slider-control {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .75rem;
+}
+
+.laygen-slider-control label {
+    margin-bottom: 0;
+    flex-shrink: 0;
+    color: var(--laygen-text-dark);
+}
+
+.laygen-slider-control input[type=range] {
+    flex-grow: 1;
+    margin: 0 5px;
+}
+
+.laygen-slider-control input[type=number] {
+    width: 50px;
+    text-align: right;
+    padding: 5px;
+    border: 1px solid var(--laygen-border-color);
+    border-radius: 4px;
+}
+
+.laygen-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-weight: 400;
+    color: var(--laygen-text-dark);
+}
+
+.laygen-preview-box-content {
+    min-height: 100px;
+    height: 100%;
+    width: 100%;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    cursor: pointer;
+    transition: all .2s;
+    box-sizing: border-box;
+    display: flex; /* Added for content alignment */
+    align-items: center; /* Center content vertically */
+    justify-content: center; /* Center content horizontally */
+    text-align: center; /* Ensure text is centered */
+    color: #333; /* Default text color for preview */
+    font-size: 0.9rem;
+}
+
+.laygen-preview-box-content:hover {
+    outline-color: #a5b4fc;
+}
+
+.laygen-preview-box-content.selected {
+    outline-color: var(--laygen-primary-color);
+    box-shadow: 0 0 8px rgba(59, 130, 246, .5);
+}
+
+/* Modal specific styles */
+.tool-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s, visibility .3s;
+}
+
+.tool-modal-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.tool-modal-content {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .3);
+    transform: scale(.95);
+    transition: transform .3s;
+}
+
+.tool-modal-overlay.visible .tool-modal-content {
+    transform: scale(1);
+}
+
+.tool-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--laygen-border-color);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.tool-modal-header h3 {
+    margin: 0;
+    color: var(--laygen-text-dark);
+}
+
+.tool-modal-body .tool-instruction {
+    margin-top: 0;
+    text-align: center;
+    color: var(--laygen-text-light);
+    margin-bottom: 1rem;
+}
+
+.tool-modal-body .tool-code-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    height: 300px;
+    font-family: 'Courier New', monospace;
+    font-size: .9rem;
+    resize: vertical;
+    padding: 10px;
+    border: 1px solid var(--laygen-border-color);
+    border-radius: 6px;
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+.tool-modal-footer {
+    text-align: right;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.tool-close-button {
+    background: none;
+    font-size: 1.5rem;
+    padding: 0 .5rem;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s ease;
+}
+
+.tool-close-button:hover {
+    color: #333;
+}
+
+/* --- Specific Styles for DetailsGen --- */
+.details-summary {
+    cursor: pointer;
+    color: #666666; /* Specific summary color */
+    padding: 10px 0; /* Give it some vertical padding */
+}
+
+.details-content-box {
+    background-color: #f5f5f5;
+    color: #333333;
+    padding: 15px; /* Adjust padding for inner content */
+    margin: 5px 15px; /* Indent the content slightly */
+    border-radius: 5px; /* Slight rounding for the content box */
+}
+
+.details-content-box p {
+    margin: 0; /* Remove default paragraph margin */
+    padding: 0;
+}
+
+/* Toast Notification Styles */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 50;
+}
+
+.toast {
+    padding: 12px 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+    transition: all 0.3s ease-in-out;
+    opacity: 1;
+    visibility: visible;
+}
+
+.toast.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px);
+}
+
+.toast.success {
+    background-color: #ecfdf5; /* Tailwind green-50 */
+    color: #065f46; /* Tailwind green-800 */
+    border: 1px solid #d1fae5; /* Tailwind green-200 */
+}
+
+.toast.error {
+    background-color: #fef2f2; /* Tailwind red-50 */
+    color: #991b1b; /* Tailwind red-800 */
+    border: 1px solid #fee2e2; /* Tailwind red-200 */
+}
+
+.toast-message {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Form Group for Details Gen */
+.details-form-group {
+    margin-bottom: 24px; /* More spacing for these groups */
+}
+
+.details-label {
+    display: block;
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500; /* font-medium */
+    color: #374151; /* gray-700 */
+    margin-bottom: 8px; /* mb-2 */
+}
+
+.details-input {
+    width: 100%;
+    padding: 12px 16px; /* px-4 py-3 */
+    border-radius: 12px; /* rounded-xl */
+    border: 1px solid #e5e7eb; /* border-gray-200 */
+    background-color: white;
+    transition: all 0.2s ease-in-out;
+    color: #1f2937; /* gray-800 */
+}
+
+.details-input:focus {
+    border-color: #3b82f6; /* focus:border-blue-500 */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); /* focus:ring-2 focus:ring-blue-200 */
+    outline: none;
+}
+
+.details-input.error {
+    border-color: #f87171; /* border-red-300 */
+    background-color: #fef2f2; /* bg-red-50 */
+}
+
+.details-input.error:focus {
+    border-color: #ef4444; /* focus:border-red-500 */
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2); /* focus:ring-red-200 */
+}
+
+.details-error-message {
+    margin-top: 8px; /* mt-2 */
+    font-size: 0.875rem; /* text-sm */
+    color: #dc2626; /* text-red-600 */
+    display: flex;
+    align-items: center;
+    gap: 4px; /* gap-1 */
+}
+
+.details-textarea {
+    width: 100%;
+    padding: 12px 16px; /* px-4 py-3 */
+    border-radius: 12px; /* rounded-xl */
+    border: 1px solid #e5e7eb; /* border-gray-200 */
+    background-color: white;
+    transition: all 0.2s ease-in-out;
+    resize: vertical; /* resize-none changed to vertical for usability */
+    min-height: 90px; /* rows-4 */
+    color: #1f2937;
+}
+
+.details-textarea:focus {
+    border-color: #3b82f6; /* focus:border-blue-500 */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); /* focus:ring-2 focus:ring-blue-200 */
+    outline: none;
+}
+
+.details-code-output pre {
+    background-color: #1f2937; /* Tailwind gray-900 */
+    color: #f9fafb; /* Tailwind gray-100 */
+    padding: 16px; /* p-4 */
+    border-radius: 12px; /* rounded-xl */
+    overflow-x: auto;
+    font-size: 0.875rem; /* text-sm */
+    line-height: 1.625; /* leading-relaxed */
+    border: 1px solid rgba(255,255,255,0.1); /* Subtle border */
+    font-family: 'Courier New', monospace;
+}
